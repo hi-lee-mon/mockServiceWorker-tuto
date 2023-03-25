@@ -1,16 +1,41 @@
+import axios from 'axios';
 import { useState } from 'react';
 
 const App = () => {
-  const [count, setCount] = useState(0);
+  const [auth, setAuth] = useState(false);
+  const [message, setMessage] = useState('');
+  const [username, setUsername] = useState('');
+
+  const login = async () => {
+    const response = await axios.post('./login');
+    if (response.status === 200) {
+      setMessage('');
+      setAuth(true);
+      return;
+    }
+    setMessage('ログイン失敗');
+  };
+
+  const handleClick = async () => {
+    const response = await axios.get('./user');
+    setUsername(response.data.username);
+  };
   return (
     <div>
-      <h1>テンプレートタイトル</h1>
-      <button type="button" onClick={() => setCount((prev) => prev + 1)}>
-        count is {count}
+      メッセージ：{message}
+      <h1>mswの学習</h1>
+      <p>{auth && 'ログイン中'}</p>
+      <button type="button" onClick={login}>
+        ログイン
       </button>
-      <div>test</div>
-      <div>test</div>
-      <div>test</div>
+      {auth && (
+        <>
+          <p>ログイン中のユーザは：{username}</p>
+          <button type="button" onClick={handleClick}>
+            ユーザ名取得
+          </button>
+        </>
+      )}
     </div>
   );
 };
